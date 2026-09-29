@@ -55,6 +55,245 @@ const next = makeCounter(); // `count` remains reachable through `next`.
 console.log(next()); // 1
 ```
 
+## Python variables, objects, and built-in types
+
+### 1. What is a variable in Python?
+
+A variable is a **name bound to an object**. It is not a box that contains the object itself.
+
+```python
+x = 10
+```
+
+Conceptually, `x` refers to the integer object `10`. Assignment binds the name `x` to that object.
+
+### 2. Are values in Python objects?
+
+Python's data model represents values as objects. Objects have an identity, a type, and a value.
+
+```python
+x = 10
+name = "Aishu"
+marks = 85.5
+numbers = [10, 20, 30]
+
+print(id(x))    # Identity for this object's lifetime
+print(type(x))  # <class 'int'>
+print(x)        # The value: 10
+```
+
+`id()` returns an object's identity. In CPython it is commonly related to the object's memory address, but Python does not promise that interpretation. `type()` reports the object's type, and evaluating the name shows its value.
+
+### 3. Built-in data type categories
+
+- Numeric: `int`, `float`, `complex`
+- Boolean: `bool`
+- Text: `str`
+- Sequences: `list`, `tuple`, `range`
+- Sets: `set`, `frozenset`
+- Mapping: `dict`
+- Binary: `bytes`, `bytearray`, `memoryview`
+- Special value: `None` (whose type is `NoneType`)
+
+### 4. Numeric types
+
+```python
+age = 25             # int
+count = -10          # int
+price = 99.0         # float
+percentage = 88.75   # float
+z = 3 + 4j           # complex
+```
+
+### 5. Boolean type
+
+Boolean values are spelled `True` and `False` with initial capitals.
+
+```python
+is_active = True
+is_logged_in = False
+
+print(bool(0))       # False
+print(bool(""))      # False
+print(bool("hello"))  # True
+```
+
+### 6. Strings
+
+A string is an immutable sequence of characters. Indexing starts at zero.
+
+```python
+name = "Aishu"
+print(name[0])  # A
+print(name[1])  # i
+```
+
+### 7. Lists
+
+Lists are ordered and mutable, allow duplicates, and can contain values of different types.
+
+```python
+numbers = [10, 20, 30]
+data = [10, "python", 25.5, True]
+```
+
+### 8. Tuples
+
+Tuples are ordered and immutable, and they allow duplicates.
+
+```python
+point = (10, 20)
+```
+
+### 9. Sets
+
+Sets are mutable collections of unique elements. They are not indexed by position.
+
+```python
+numbers = {10, 10, 20, 30}
+print(numbers)  # Contains 10, 20, and 30; order is not a positional guarantee
+```
+
+Use `frozenset` for an immutable set.
+
+### 10. Dictionaries
+
+Dictionaries store key-value pairs.
+
+```python
+student = {
+	"id": 101,
+	"name": "Aishu",
+	"marks": 85.5,
+}
+```
+
+### 11. `None`
+
+`None` represents the absence of a value. It is different from `0`, `False`, an empty string (`""`), and an empty list (`[]`); each has a different meaning and type.
+
+```python
+result = None
+```
+
+### 12. Mutable and immutable objects
+
+An immutable object cannot be changed after it is created. Common immutable types include `int`, `float`, `bool`, `str`, `tuple`, and `frozenset`.
+
+Mutable objects can be changed in place. Common mutable types include `list`, `set`, `dict`, and `bytearray`.
+
+### 13. Rebinding a name
+
+When an immutable value appears to change, the name is usually being bound to a different object; the original object was not modified.
+
+```python
+x = 10
+x = 20
+```
+
+After the first assignment, `x` refers to `10`; after the second, it refers to `20`. The integer `10` was not changed.
+
+### 14. Two names bound to one immutable object
+
+```python
+a = 10
+b = a
+a = 20
+
+print(a)  # 20
+print(b)  # 10
+```
+
+Initially, both names refer to the integer object `10`. Rebinding `a` does not rebind `b`.
+
+### 15. Two names referring to one mutable object
+
+```python
+a = [10, 20]
+b = a
+b.append(30)
+print(a)  # [10, 20, 30]
+```
+
+Both names refer to the same list. `append()` mutates that list, so the change is visible through either name.
+
+### 16. `==` versus `is`
+
+`==` compares values for equality. `is` checks whether two names refer to the very same object.
+
+```python
+a = [1, 2]
+b = [1, 2]
+
+print(a == b)  # True: equal contents
+print(a is b)  # False: distinct list objects
+```
+
+Use `is None` when checking for `None`. Do not use `is` as a substitute for value equality.
+
+### 17. Where does Python use memory?
+
+A Python program uses memory for objects such as integers, strings, dictionaries, lists, and functions, as well as for its runtime and execution state. Python manages object memory dynamically. In CPython, objects are managed by Python's memory allocator, which obtains memory from the process and ultimately the operating system. Exact implementation details vary across Python implementations.
+
+### 18. Reference counting in CPython
+
+CPython primarily uses reference counting. Conceptually, when another name refers to an object, that is another reference; removing a reference can decrease the count.
+
+```python
+a = [1, 2, 3]
+b = a  # Both names refer to the same list.
+del b  # Removes the name b; a still refers to the list.
+```
+
+This is a conceptual explanation, not a reliable way to inspect an exact count: temporary references and implementation details affect observed counts.
+
+### 19. Garbage collection
+
+Garbage collection is automatic memory management that reclaims objects the program can no longer reach. Python programmers normally do not manually free object memory.
+
+### 20. Reference counting and cyclic garbage collection
+
+Reference counting can reclaim many objects when their reference count reaches zero. It cannot, by itself, reclaim objects that only refer to each other in a cycle. CPython's cyclic garbage collector can detect and collect many unreachable cycles.
+
+```python
+a = []
+a.append(a)  # The list refers to itself, creating a cycle.
+```
+
+### 21. What does `del` do?
+
+`del` removes a name or reference; it does not guarantee that the object is immediately destroyed.
+
+```python
+numbers = [1, 2, 3]
+b = numbers
+del numbers
+print(b)  # [1, 2, 3]
+```
+
+The list remains reachable through `b`.
+
+### 22. When can an object be reclaimed?
+
+An object becomes eligible for reclamation when it is no longer reachable. In CPython, an object with no remaining references is often reclaimed promptly, but cycles and implementation details can affect when that happens. The exact timing is not a general Python guarantee, and reclaimed memory is not necessarily returned to the operating system immediately.
+
+```python
+numbers = [1, 2, 3]
+b = numbers
+del numbers
+del b  # No longer reachable through these two names.
+```
+
+### 23. A conceptual model
+
+**Name -> object (identity, type, value) -> managed memory -> unreachable object may be reclaimed.**
+
+This is a mental model, not a promise about the exact internal storage or reclamation timing.
+
+### 24. Why doesn't `del numbers` necessarily destroy an object immediately?
+
+Because `del numbers` removes the name `numbers`; other names, containers, or parts of the program may still refer to the object. If it becomes unreachable, the runtime can reclaim it. CPython often reclaims non-cyclic objects promptly through reference counting, while cyclic garbage may be collected later. Python also does not guarantee that reclaimed memory is immediately returned to the operating system.
+
 ## Memory allocation in Python
 
 Python's language specification does not require one particular memory-management implementation. The following describes **CPython**, the most commonly used implementation.
