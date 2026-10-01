@@ -330,3 +330,167 @@ A larger program might follow a flow like:
 ```text
 main() -> validate() -> calculate() -> save() -> display()
 ```
+
+
+## 21. Function calling flow
+
+When a function is called, Python matches the arguments to the parameters, runs the function body, and sends its return value back to the caller.
+
+```python
+def multiply(a, b):
+	return a * b
+
+
+result = multiply(5, 4)
+print(result)  # 20
+```
+
+Python calls `multiply` with `a = 5` and `b = 4`. The function calculates `5 * 4` and returns `20`; then that value is assigned to `result`.
+
+## 22. Functions are objects
+
+Functions are objects in Python. A variable can refer to a function, and calling that variable calls the function.
+
+```python
+def greet():
+	print("Hello")
+
+
+x = greet  # Assign the function object; do not call it yet.
+x()        # Calls greet() and prints Hello.
+```
+
+Here, `x` refers to the same function object as `greet`.
+
+## 23. Passing a function to another function
+
+Because functions are objects, they can be passed as arguments. A function that accepts or returns another function is called a **higher-order function**.
+
+```python
+def square(x):
+	return x * x
+
+
+def process(function, value):
+	return function(value)
+
+
+print(process(square, 5))  # 25
+```
+
+`process` receives `square` as its `function` argument and calls it with `5`.
+
+## 24. Lambda functions
+
+A `lambda` creates a small anonymous function expression. It can contain one expression and returns that expression's result.
+
+```python
+square = lambda x: x * x
+print(square(5))  # 25
+```
+
+Lambdas are often useful for short operations passed to other functions:
+
+```python
+numbers = [1, 2, 3, 4]
+result = list(map(lambda x: x * 2, numbers))
+print(result)  # [2, 4, 6, 8]
+```
+
+For more complex logic, use a named function instead; it is easier to read and reuse.
+
+## 25. Recursion
+
+A recursive function calls itself. It needs a **base case** that stops the recursion.
+
+```python
+def countdown(n):
+	if n == 0:
+		return
+	print(n)
+	countdown(n - 1)
+
+
+countdown(5)  # Prints 5, 4, 3, 2, 1.
+```
+
+When `n` reaches `0`, the base case returns and the calls finish. Without a base case, recursion continues until Python raises a `RecursionError`.
+
+## 26. Function documentation
+
+A **docstring** is a string at the beginning of a function body that describes the function. It is available through the function's `__doc__` attribute.
+
+```python
+def add(a, b):
+	"""Return the sum of two numbers."""
+	return a + b
+
+
+print(add.__doc__)
+```
+
+Writing clear docstrings is a useful professional Python habit, especially when a function's purpose or inputs are not obvious.
+
+## 27. Type hints
+
+Type hints communicate intended types to developers and tools. Python generally does not enforce them automatically at runtime.
+
+```python
+def add(a: int, b: int) -> int:
+	return a + b
+```
+
+Here, the hints indicate that `a` and `b` are expected to be integers and that the function is expected to return an integer.
+
+## 28. Practical example: electricity bill
+
+This example charges 2 units per kWh for the first 100 units, 4 for the next 100, and 6 for any units above 200, plus a fixed charge of 100.
+
+```python
+def calculate_bill(units):
+	if units <= 100:
+		amount = units * 2
+	elif units <= 200:
+		amount = 100 * 2 + (units - 100) * 4
+	else:
+		amount = 100 * 2 + 100 * 4 + (units - 200) * 6
+	return amount + 100
+
+
+units = int(input("Enter units: "))
+bill = calculate_bill(units)
+print("Bill:", bill)
+```
+
+Putting the calculation in `calculate_bill` separates the billing logic from input and output. This makes the calculation reusable, easier to test, easier to read, and easier to maintain.
+
+## 29. Function design
+
+A well-designed function usually has a clear input, performs a focused piece of processing, and produces an output. Some functions perform an action, such as displaying information, instead of returning a value.
+
+## 30. Avoid giant functions
+
+A function that handles input, validation, calculations, database work, and printing all at once is difficult to understand and test. Split those responsibilities into smaller functions instead:
+
+```python
+def get_student():
+	pass
+
+
+def validate_student(student):
+	pass
+
+
+def calculate_student_result(student):
+	pass
+
+
+def save_student(student):
+	pass
+
+
+def display_student(student):
+	pass
+```
+
+These are function-only examples; you do not need to create a class to organize code this way. Give each function one clear responsibility. Smaller, focused functions are generally easier to read, test, reuse, and maintain.
